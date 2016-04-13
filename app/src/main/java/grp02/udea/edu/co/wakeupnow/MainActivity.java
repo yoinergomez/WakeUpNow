@@ -8,6 +8,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextClock;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+
+import grp02.udea.edu.co.wakeupnow.view.ItemAlarma;
+import grp02.udea.edu.co.wakeupnow.view.adapter.ItemAlarmaAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,6 +26,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+        ArrayList<ItemAlarma> alarmas = new ArrayList<ItemAlarma>();
+        ItemAlarma itemAlarma = new ItemAlarma();
+        itemAlarma.setHoraAlarma("11:22 a");
+        alarmas.add(itemAlarma);
+        ListView lista = (ListView) findViewById(R.id.ListView_alarmas);
+        lista.setAdapter(new ItemAlarmaAdapter(this, R.layout.item_alarma, alarmas){
+            @Override
+            public void onEntrada(Object entrada, View view) {
+                TextView texto_superior_entrada = (TextView) view.findViewById(R.id.textView_superior);
+                texto_superior_entrada.setText(((ItemAlarma) entrada).getHoraAlarma());
+            }
+        });
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

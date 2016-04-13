@@ -3,65 +3,74 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_marginLeft="@dimen/activity_vertical_margin"
     android:layout_marginRight="@dimen/activity_vertical_margin"
     android:layout_marginTop="@dimen/activity_horizontal_margin"
     android:layout_marginBottom="@dimen/activity_horizontal_margin">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <TextClock
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!--
+            <TextClock
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/textoReloj"
+                android:textSize="50sp"
+                android:textStyle="bold"
+                tools:targetApi="jelly_bean_mr1" />
+             -->
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_marginStart="@dimen/activity_vertical_margin"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/textClock"
-            android:textSize="45sp"
-            android:textStyle="bold"
-            tools:targetApi="jelly_bean_mr1" />
-    </LinearLayout>
+            android:orientation="vertical"
+            tools:ignore="RtlCompat">
 
+            <TextView
+                android:id="@+id/textView_superior"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Large Text"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <LinearLayout
-        android:layout_marginStart="@dimen/activity_vertical_margin"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:ignore="RtlCompat">
+            <android.support.v7.widget.SwitchCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
 
-        <TextView
-            android:id="@+id/textView_superior"
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Large Text"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/activity_vertical_margin"
+            tools:ignore="RtlCompat">
 
-        <android.support.v7.widget.SwitchCompat
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"/>
+            <ImageView
+                android:id="@+id/imageView_imagen"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:tint="@color/colorPrimary"
+                android:src="@android:drawable/ic_lock_idle_alarm" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/activity_vertical_margin"
-        tools:ignore="RtlCompat">
-
-        <ImageView
-            android:id="@+id/imageView_imagen"
-            android:layout_width="50dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:adjustViewBounds="true"
-            android:tint="@color/colorPrimary"
-            android:src="@android:drawable/ic_lock_idle_alarm" />
+        </LinearLayout>
 
     </LinearLayout>
-
-
 
 
 </LinearLayout>
