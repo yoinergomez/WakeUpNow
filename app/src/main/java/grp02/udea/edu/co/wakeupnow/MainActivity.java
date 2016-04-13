@@ -1,6 +1,5 @@
 package grp02.udea.edu.co.wakeupnow;
 
-import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,12 +11,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.widget.ToggleButton;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -27,6 +28,7 @@ import grp02.udea.edu.co.wakeupnow.view.adapter.ItemAlarmaAdapter;
 public class MainActivity extends AppCompatActivity {
 
     private ArrayList<ItemAlarma> alarmas;
+    private ListView lista;
     private int hora;
     private int minuto;
 
@@ -39,14 +41,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         alarmas = new ArrayList<ItemAlarma>();
+        lista = (ListView) findViewById(R.id.ListView_alarmas);
 
+        listenerListaAlarmas();
 
         final TextView texoReloj = (TextView) findViewById(R.id.textoReloj);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //agregarAlarma();
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
@@ -59,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 mTimePicker = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        actualizarListaAlarmas(selectedHour, selectedMinute);
+                        agregarAlarma(selectedHour, selectedMinute);
                         Toast.makeText(getApplicationContext(),selectedHour+":"+selectedMinute+" "+timePicker.getBaseline(),Toast.LENGTH_LONG).show();
                     }
                 }, hour, minute, false);//Yes 24 hour time
@@ -91,51 +94,19 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /*
-    public void agregarAlarma(){
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_agregar_alarma);
-        dialog.show();
-
-
-        Button cancelar = (Button) findViewById(R.id.boton_cancelar);
-        cancelar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-
-        final int hora;
-        String minuto;
-        final TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker_reloj);
-
-        Button aceptar = (Button) findViewById(R.id.boton_aceptar);
-        aceptar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final int hora=timePicker.getHour();
-                final int minuto = timePicker.getMinute();
-                Toast.makeText(null,hora+":"+minuto,Toast.LENGTH_LONG).show();
-                dialog.dismiss();
-            }
-        });
-        //Toast.makeText(this,hora+":"+minuto,Toast.LENGTH_LONG).show();
-
-    }
-    */
 
     /**
      *
      */
-    public void actualizarListaAlarmas(int hora, int minuto){
+    public void agregarAlarma(int hora, int minuto){
         // Nuevo item de alarma
         ItemAlarma itemAlarma = new ItemAlarma();
 
         //Asignando valores
         if (hora>12){
             hora = hora-12;
+            itemAlarma.setEsPM(true);
+        } else if(hora==12){
             itemAlarma.setEsPM(true);
         }
 
@@ -148,28 +119,62 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void cargarListaAdapter(){
-        ListView lista = (ListView) findViewById(R.id.ListView_alarmas);
-        lista.setAdapter(new ItemAlarmaAdapter(this, R.layout.item_alarma, alarmas){
+        lista.setAdapter(new ItemAlarmaAdapter(this, R.layout.item_alarma, alarmas) {
             @Override
             public void onEntrada(Object entrada, View view) {
                 TextView reloj = (TextView) view.findViewById(R.id.textoReloj);
                 reloj.setText(((ItemAlarma) entrada).getAlarma());
 
                 TextView horario = (TextView) view.findViewById(R.id.textHorario);
-                if(((ItemAlarma) entrada).isEsPM()){
+                if (((ItemAlarma) entrada).isEsPM()) {
                     horario.setText(ItemAlarma.PM);
-                } else{
+                } else {
                     horario.setText(ItemAlarma.AM);
                 }
 
+                SwitchCompat activada = (SwitchCompat) view.findViewById(R.id.switch_activarAlarma);
                 TextView estado = (TextView) view.findViewById(R.id.textView_estadoAlarma);
-                if(((ItemAlarma) entrada).isEstaActiva()){
+                if (((ItemAlarma) entrada).isEstaActiva()) {
                     estado.setText(ItemAlarma.ACTIVADA);
-                    SwitchCompat activada = (SwitchCompat) findViewById(R.id.switch_activarAlarma);
-                } else{
+                    activada.setChecked(true);
+                } else {
                     estado.setText(ItemAlarma.DESACTIVADA);
+                    activada.setChecked(false);
                 }
 
+                listenerClickSwitch(view, (ItemAlarma)entrada);
+            }
+        });
+    }
+
+    public void listenerListaAlarmas(){
+        lista.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> pariente, View view, int posicion, long id) {
+                ItemAlarma elegido = (ItemAlarma) pariente.getItemAtPosition(posicion);
+
+                CharSequence texto = "Seleccionado: " + elegido.isEstaActiva();
+                Toast toast = Toast.makeText(MainActivity.this, texto+" "+elegido.getAlarma()+" "+elegido.getHoraAlarma()+" "+elegido.getMinutoAlarma(), Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+    }
+
+    public void listenerClickSwitch(View view, ItemAlarma item){
+        final ItemAlarma itemSeleccionado = item;
+        SwitchCompat activada = (SwitchCompat) view.findViewById(R.id.switch_activarAlarma);
+        final TextView estado = (TextView) view.findViewById(R.id.textView_estadoAlarma);
+        System.out.println(activada==null);
+        activada.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(itemSeleccionado.isEstaActiva()) {
+                    estado.setText(ItemAlarma.DESACTIVADA);
+                    itemSeleccionado.setEstaActiva(false);
+                } else {
+                    estado.setText(ItemAlarma.ACTIVADA);
+                    itemSeleccionado.setEstaActiva(true);
+                }
             }
         });
     }
