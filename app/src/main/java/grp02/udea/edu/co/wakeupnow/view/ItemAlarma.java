@@ -5,13 +5,70 @@ package grp02.udea.edu.co.wakeupnow.view;
  */
 public class ItemAlarma {
 
-    CharSequence horaAlarma;
+    public static final String ACTIVADA = "ACTIVADA";
+    public static final String DESACTIVADA = "DESACTIVADA";
+    public static final String AM = "a.m";
+    public static final String PM = "p.m";
 
-    public CharSequence getHoraAlarma() {
+    private String horaAlarma;
+    private String minutoAlarma;
+    private boolean esPM;
+    private boolean estaActiva;
+
+
+    public ItemAlarma() {
+        esPM = false;
+        estaActiva = true;
+    }
+
+    public String getHoraAlarma() {
         return horaAlarma;
     }
 
-    public void setHoraAlarma(CharSequence horaAlarma) {
-        this.horaAlarma = horaAlarma;
+    public void setHoraAlarma(int horaAlarma) {
+        if(horaAlarma<9){
+            if (horaAlarma==0){
+                this.horaAlarma = "12";
+            }else {
+                this.horaAlarma = "0" + horaAlarma;
+            }
+        } else {
+            this.horaAlarma = String.valueOf(horaAlarma);
+        }
     }
+
+    public String getMinutoAlarma() {
+        return minutoAlarma;
+    }
+
+    public void setMinutoAlarma(int minutoAlarma) {
+        if(minutoAlarma<9){
+            this.minutoAlarma = "0"+minutoAlarma;
+        } else {
+            this.minutoAlarma = String.valueOf(minutoAlarma);
+        }
+    }
+
+    public boolean isEsPM() {
+        return esPM;
+    }
+
+    public void setEsPM(boolean esPM) {
+        this.esPM = esPM;
+    }
+
+    public boolean isEstaActiva() {
+        return estaActiva;
+    }
+
+    public void setEstaActiva(boolean estaActiva) {
+        this.estaActiva = estaActiva;
+    }
+
+    public String getAlarma(){
+        return horaAlarma+":"+minutoAlarma;
+    }
+
+
+
 }

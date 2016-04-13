@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_marginLeft="@dimen/activity_vertical_margin"
@@ -10,53 +10,69 @@
     android:layout_marginBottom="@dimen/activity_horizontal_margin">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="100">
 
-            <!--
-            <TextClock
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+
+            <TextView
                 android:id="@+id/textoReloj"
-                android:textSize="50sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="88:88"
+                android:textSize="40sp"
                 android:textStyle="bold"
-                tools:targetApi="jelly_bean_mr1" />
-             -->
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/textHorario"
+                android:layout_marginLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="p.m"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
 
         </LinearLayout>
 
 
         <LinearLayout
-            android:layout_marginStart="@dimen/activity_vertical_margin"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_weight="10"
+            android:gravity="center"
             android:orientation="vertical"
             tools:ignore="RtlCompat">
 
             <TextView
-                android:id="@+id/textView_superior"
+                android:id="@+id/textView_estadoAlarma"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Large Text"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <android.support.v7.widget.SwitchCompat
+                android:id="@+id/switch_activarAlarma"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:checked="true"/>
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/activity_vertical_margin"
+            android:layout_weight="10"
+            android:gravity="center"
             tools:ignore="RtlCompat">
 
             <ImageView
