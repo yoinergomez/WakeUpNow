@@ -186,6 +186,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Agrega el listener para cada item de la lista de alarmas
+     */
     public void listenerListaAlarmas(){
         lista.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -199,12 +202,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Agrega el listener paara el switch que permite activar o desactivar una alarma
+     * @param view
+     * @param item
+     */
     public void listenerClickSwitch(View view, ItemAlarma item){
         final ItemAlarma itemSeleccionado = item;
         final View view1 = view;
         final SwitchCompat activada = (SwitchCompat) view.findViewById(R.id.switch_activarAlarma);
 
-
+        /**
+         * Es necesario crear el OnCLick porque en el item de la alarma
+         * existen varios componentes de la vista que son cliqueables
+         */
         activada.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
