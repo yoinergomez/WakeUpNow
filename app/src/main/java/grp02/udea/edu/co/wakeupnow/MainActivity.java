@@ -9,16 +9,20 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -116,8 +120,9 @@ public class MainActivity extends AppCompatActivity {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), 1, intent, 0);
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 11,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         //Fin creaciòn del servicio de alarma
@@ -176,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                     activada.setChecked(false);
                 }
 
-                listenerClickSwitch(view, (ItemAlarma)entrada);
+                listenerClickSwitch(view, (ItemAlarma) entrada);
             }
         });
     }
@@ -188,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                 ItemAlarma elegido = (ItemAlarma) pariente.getItemAtPosition(posicion);
 
                 CharSequence texto = "Seleccionado: " + elegido.isEstaActiva();
-                Toast toast = Toast.makeText(MainActivity.this, texto+" "+elegido.getAlarma()+" "+elegido.getHoraAlarma()+" "+elegido.getMinutoAlarma(), Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(MainActivity.this, texto + " " + elegido.getAlarma() + " " + elegido.getHoraAlarma() + " " + elegido.getMinutoAlarma(), Toast.LENGTH_SHORT);
                 toast.show();
             }
         });
@@ -196,17 +201,27 @@ public class MainActivity extends AppCompatActivity {
 
     public void listenerClickSwitch(View view, ItemAlarma item){
         final ItemAlarma itemSeleccionado = item;
-        SwitchCompat activada = (SwitchCompat) view.findViewById(R.id.switch_activarAlarma);
-        final TextView estado = (TextView) view.findViewById(R.id.textView_estadoAlarma);
-        System.out.println(activada==null);
+        final View view1 = view;
+        final SwitchCompat activada = (SwitchCompat) view.findViewById(R.id.switch_activarAlarma);
+
+
         activada.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+            }
+        });
+
+        activada.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
+                final TextView estado = (TextView) view1.findViewById(R.id.textView_estadoAlarma);
                 if(itemSeleccionado.isEstaActiva()) {
                     estado.setText(ItemAlarma.DESACTIVADA);
+                    estado.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorDesactivado));
                     itemSeleccionado.setEstaActiva(false);
                 } else {
                     estado.setText(ItemAlarma.ACTIVADA);
+                    estado.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorActivado));
                     itemSeleccionado.setEstaActiva(true);
                 }
             }
