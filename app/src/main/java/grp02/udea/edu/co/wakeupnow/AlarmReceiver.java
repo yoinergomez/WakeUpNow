@@ -1,10 +1,12 @@
 package grp02.udea.edu.co.wakeupnow;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Vibrator;
 import android.widget.Toast;
+
 
 /**
  * Created by Pc1 on 13/04/2016.

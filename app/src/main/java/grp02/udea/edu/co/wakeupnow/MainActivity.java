@@ -1,5 +1,6 @@
 package grp02.udea.edu.co.wakeupnow;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
@@ -22,10 +23,13 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,7 +38,9 @@ import java.util.Date;
 import grp02.udea.edu.co.wakeupnow.dao.AlarmaDAO;
 import grp02.udea.edu.co.wakeupnow.modelo.Alarma;
 import grp02.udea.edu.co.wakeupnow.view.ItemAlarma;
+import grp02.udea.edu.co.wakeupnow.view.adapter.OrientacionPortraitScanner;
 import grp02.udea.edu.co.wakeupnow.view.adapter.ItemAlarmaAdapter;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -77,12 +83,26 @@ public class MainActivity extends AppCompatActivity {
                         public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                             agregarAlarma(selectedHour, selectedMinute);
                             Toast.makeText(getApplicationContext(), selectedHour + ":" + selectedMinute + " " + timePicker.getBaseline(), Toast.LENGTH_LONG).show();
+
+
+                            //new IntentIntegrator((Activity) MainActivity.this).initiateScan();
+                            IntentIntegrator integrator = new IntentIntegrator((Activity) MainActivity.this);
+                            integrator.setCaptureActivity(OrientacionPortraitScanner.class);
+                            integrator.setPrompt("Escanee el codigo QR para apagar la alarma");
+                            integrator.setOrientationLocked(true);
+                            integrator.initiateScan();
+
+
+
+
+
                         }
                     }, hour, minute, false);//Yes 24 hour time
                     mTimePicker.setTitle("Seleccione hora");
                     mTimePicker.show();
                 }
             });
+
         }
 
     @Override
@@ -105,6 +125,36 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Decodifica el código QR para obtener su respectivo texto
+     * @param requestCode
+     * @param resultCode
+     * @param intent
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        switch (requestCode) {
+            case IntentIntegrator.REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+
+                    IntentResult intentResult =
+                            IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+
+                    if (intentResult != null) {
+
+                        String contents = intentResult.getContents();
+                        String format = intentResult.getFormatName();
+
+                        Log.d("@ onActivityResult","CONTENIDO_DEL_QR: " + contents + ", FORMATO: " + format);
+                    } else {
+                        Log.e("@ onActivityResult", "IntentResult es NULL!");
+                    }
+                } else if (resultCode == Activity.RESULT_CANCELED) {
+                    Log.e("@ onActivityResult", "CANCELADO");
+                }
+        }
     }
 
 
