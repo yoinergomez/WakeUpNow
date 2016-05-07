@@ -84,14 +84,14 @@ public class MainActivity extends AppCompatActivity {
                             agregarAlarma(selectedHour, selectedMinute);
                             Toast.makeText(getApplicationContext(), selectedHour + ":" + selectedMinute + " " + timePicker.getBaseline(), Toast.LENGTH_LONG).show();
 
-
+                            /*
                             //new IntentIntegrator((Activity) MainActivity.this).initiateScan();
                             IntentIntegrator integrator = new IntentIntegrator((Activity) MainActivity.this);
                             integrator.setCaptureActivity(OrientacionPortraitScanner.class);
                             integrator.setPrompt("Escanee el codigo QR para apagar la alarma");
                             integrator.setOrientationLocked(true);
                             integrator.initiateScan();
-
+                            */
 
 
 
