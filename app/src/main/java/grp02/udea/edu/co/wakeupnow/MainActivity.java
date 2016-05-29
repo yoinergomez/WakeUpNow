@@ -211,29 +211,35 @@ public class MainActivity extends AppCompatActivity {
         lista.setAdapter(new ItemAlarmaAdapter(this, R.layout.item_alarma, alarmas) {
             @Override
             public void onEntrada(Object entrada, View view) {
+                final ItemAlarma item = (ItemAlarma) entrada;
                 TextView reloj = (TextView) view.findViewById(R.id.textoReloj);
                 reloj.setText(((ItemAlarma) entrada).getAlarma());
 
                 TextView horario = (TextView) view.findViewById(R.id.textHorario);
-                if (((ItemAlarma) entrada).isEsPM()) {
+                if (item.isEsPM()) {
                     horario.setText(ItemAlarma.PM);
                 } else {
                     horario.setText(ItemAlarma.AM);
                 }
-
                 SwitchCompat activada = (SwitchCompat) view.findViewById(R.id.switch_activarAlarma);
+                System.out.println("cargarListaAdapter "+item.getAlarma()+" "+item.isEstaActiva());
                 TextView estado = (TextView) view.findViewById(R.id.textView_estadoAlarma);
-                if (((ItemAlarma) entrada).isEstaActiva()) {
-                    estado.setText(ItemAlarma.ACTIVADA);
+                if (item.isEstaActiva()) {
                     activada.setChecked(true);
+                    estado.setText(ItemAlarma.ACTIVADA);
+                    estado.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorActivado));
                 } else {
                     estado.setText(ItemAlarma.DESACTIVADA);
                     activada.setChecked(false);
+                    estado.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorDesactivado));
                 }
 
-                listenerClickSwitch(view, (ItemAlarma) entrada);
+                listenerClickSwitch(view, item, activada);
             }
         });
+        for(ItemAlarma itemAlarma : alarmas){
+            System.out.println("ciclo: "+itemAlarma.isEstaActiva());
+        }
     }
 
     /**
@@ -253,14 +259,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * http://stackoverflow.com/questions/27641705/oncheckedchanged-called-automatically
      * Agrega el listener paara el switch que permite activar o desactivar una alarma
      * @param view
      * @param item
      */
-    public void listenerClickSwitch(View view, ItemAlarma item){
+    public void listenerClickSwitch(View view, ItemAlarma item, SwitchCompat switchActivar){
         final ItemAlarma itemSeleccionado = item;
         final View view1 = view;
-        final SwitchCompat activada = (SwitchCompat) view.findViewById(R.id.switch_activarAlarma);
+        final SwitchCompat activada = switchActivar;
 
         /**
          * Es necesario crear el OnCLick porque en el item de la alarma
@@ -274,16 +281,20 @@ public class MainActivity extends AppCompatActivity {
 
         activada.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
-                final TextView estado = (TextView) view1.findViewById(R.id.textView_estadoAlarma);
-                if(itemSeleccionado.isEstaActiva()) {
-                    estado.setText(ItemAlarma.DESACTIVADA);
-                    estado.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorDesactivado));
-                    itemSeleccionado.setEstaActiva(false);
-                } else {
-                    estado.setText(ItemAlarma.ACTIVADA);
-                    estado.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorActivado));
-                    itemSeleccionado.setEstaActiva(true);
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (buttonView.isPressed()) {
+                    final TextView estado = (TextView) view1.findViewById(R.id.textView_estadoAlarma);
+                    if (isChecked) {
+                        estado.setText(ItemAlarma.ACTIVADA);
+                        estado.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorActivado));
+                        itemSeleccionado.setEstaActiva(true);
+                        //System.out.println("onCheckedChanged "+itemSeleccionado.isEstaActiva());
+                    } else {
+                        estado.setText(ItemAlarma.DESACTIVADA);
+                        estado.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorDesactivado));
+                        itemSeleccionado.setEstaActiva(false);
+                        //System.out.println("onCheckedChanged "+itemSeleccionado.isEstaActiva());
+                    }
                 }
             }
         });

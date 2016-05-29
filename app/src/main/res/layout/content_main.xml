@@ -12,9 +12,13 @@
     tools:context="grp02.udea.edu.co.wakeupnow.MainActivity"
     tools:showIn="@layout/activity_main">
 
+
+
     <ListView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/ListView_alarmas"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="wrap_content" >
     </ListView>
+
+
 </RelativeLayout>
