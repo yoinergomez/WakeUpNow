@@ -1,0 +1,6 @@
+*Acceder a la id de cada registro de la tabla alarmas:
+	*Manejar localmente la id
+*Listar las alarmas para accederlas localmente.
+*Poder asociar a las pending intent el id
+*ejecutar varias alarmas al tiempo sin problemas
+*cancelar alarmas cuando quiera
