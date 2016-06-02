@@ -49,6 +49,30 @@ public class AlarmaDAO extends BDAppRunDAO{
 
     }
 
+    public void actualizarAlarma(Alarma alarma){
+        ContentValues values=new ContentValues();
+        //int idDia=alarma.getDia().getIdDia();
+        int vibracion=0;
+        int activada=0;
+        if(alarma.isVibracion()){
+            vibracion=1
+            ;        }
+        if (alarma.isActivada()){
+            activada=1;
+        }
+        values.put(DataBaseHelper.ID_ALARMA_COLUMNA,alarma.getIdAlarma());
+        values.put(DataBaseHelper.NOMBRE_ALARMA_COLUMNA,"StringCualquiera");
+        values.put(DataBaseHelper.FECHA_ALARMA_COLUMNA,formatter.format(alarma.getFecha()));
+        values.put(DataBaseHelper.ID_DIA_ALARMA_COLUMNA,0);
+        values.put(DataBaseHelper.VIBRACION_ALARMA_COLUMNA,false);
+        values.put(DataBaseHelper.ACTIVADA_ALARMA_COLUMNA,activada);
+
+        //Clausula WHERE
+        String seleccion = DataBaseHelper.ID_ALARMA_COLUMNA + " = ?";
+        String[] seleccionArgs = { String.valueOf(alarma.getIdAlarma()) };
+         getDb().update(DataBaseHelper.TABLA_ALARMA,values,seleccion,seleccionArgs );
+    }
+
     public Cursor getTodasLasAlarmas() {
         String[] columnas = new String[]{DataBaseHelper.ID_ALARMA_COLUMNA,DataBaseHelper.NOMBRE_ALARMA_COLUMNA ,
                 DataBaseHelper.FECHA_ALARMA_COLUMNA,DataBaseHelper.ACTIVADA_ALARMA_COLUMNA};
