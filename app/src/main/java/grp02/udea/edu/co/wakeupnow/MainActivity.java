@@ -41,13 +41,13 @@ import java.util.Locale;
 import grp02.udea.edu.co.wakeupnow.dao.AlarmaDAO;
 import grp02.udea.edu.co.wakeupnow.modelo.Alarma;
 import grp02.udea.edu.co.wakeupnow.view.ItemAlarma;
-import grp02.udea.edu.co.wakeupnow.view.adapter.OrientacionPortraitScanner;
 import grp02.udea.edu.co.wakeupnow.view.adapter.ItemAlarmaAdapter;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<ItemAlarma> alarmas;
+    private ArrayList<ItemAlarma> itemAlarmas;
+    private ArrayList<Alarma> alarmas;
     private ListView lista;
     private Alarma alarma;
     private AlarmaDAO alarmaDAO;
@@ -64,8 +64,8 @@ public class MainActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
             formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
             pendingIntents=new ArrayList<>();
-
-            alarmas = new ArrayList<ItemAlarma>();
+            alarmas = new ArrayList<Alarma>();
+            itemAlarmas = new ArrayList<ItemAlarma>();
             lista = (ListView) findViewById(R.id.ListView_alarmas);
             alarmaDAO=new AlarmaDAO(this);
             numeroAlarmas=alarmaDAO.getIdUltimoRegistro()+1;
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                     mTimePicker.show();
                 }
             });
-        //cargando las alarmas y pendingIntents almacenados previamente
+        //cargando las itemAlarmas y pendingIntents almacenados previamente
         int hora;
         int minuto;
         Date fechaAlarma;
@@ -137,10 +137,20 @@ public class MainActivity extends AppCompatActivity {
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this,cursor.getInt(0),
                     intent, PendingIntent.FLAG_UPDATE_CURRENT);
             pendingIntents.add(pendingIntent);
+            Alarma alarmaAux = new Alarma();
+            alarmaAux.setFecha(fechaAlarma);
+            if(cursor.getInt(3)==0){
+                alarmaAux.setActivada(false);
+            }else{
+                alarmaAux.setActivada(true);
+            }
+            alarmaAux.setIdAlarma(cursor.getInt(0));
+            alarmas.add(alarmaAux);
             itemAlarma.setIdItem(cursor.getInt(0));
             itemAlarma.setHoraAlarma(hora);
             itemAlarma.setMinutoAlarma(minuto);
-            alarmas.add(itemAlarma);
+            itemAlarma.setEstaActiva(alarmaAux.isActivada());
+            itemAlarmas.add(itemAlarma);
             cargarListaAdapter();
         }
         cursor.close();
@@ -226,9 +236,9 @@ public class MainActivity extends AppCompatActivity {
         alarma.setFecha(date);
         alarma.setActivada(true);
         alarma.setIdAlarma(numeroAlarmas);
-        Log.d("@@@","numeroAlarmas:" + numeroAlarmas);
+        Log.d("@@@", "numeroAlarmas:" + numeroAlarmas);
         pendingIntents.add(pendingIntent);
-
+        alarmas.add(alarma);
         alarmaDAO.guardarAlarma(alarma);
 
         // Nuevo item de alarma
@@ -245,14 +255,14 @@ public class MainActivity extends AppCompatActivity {
 
         itemAlarma.setHoraAlarma(hora);
         itemAlarma.setMinutoAlarma(minuto);
-        alarmas.add(itemAlarma);
+        itemAlarmas.add(itemAlarma);
         cargarListaAdapter();
 
     }
 
 
     public void cargarListaAdapter(){
-        lista.setAdapter(new ItemAlarmaAdapter(this, R.layout.item_alarma, alarmas) {
+        lista.setAdapter(new ItemAlarmaAdapter(this, R.layout.item_alarma, itemAlarmas) {
             @Override
             public void onEntrada(Object entrada, View view) {
                 TextView reloj = (TextView) view.findViewById(R.id.textoReloj);
@@ -281,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Agrega el listener para cada item de la lista de alarmas
+     * Agrega el listener para cada item de la lista de itemAlarmas
      */
     public void listenerListaAlarmas(){
         lista.setOnItemClickListener(new OnItemClickListener() {
@@ -322,6 +332,7 @@ public class MainActivity extends AppCompatActivity {
                 AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
                 PendingIntent pendingIntent=pendingIntents.get(itemSeleccionado.getIdItem());
                 Calendar calendar = Calendar.getInstance();
+                Alarma alarmaSeleccionada=alarmas.get(itemSeleccionado.getIdItem());
                 int horaReinicio;
                 int minutoReinicio;
                 if (buttonView.isPressed()) {
@@ -330,6 +341,7 @@ public class MainActivity extends AppCompatActivity {
                         estado.setText(ItemAlarma.ACTIVADA);
                         estado.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorActivado));
                         itemSeleccionado.setEstaActiva(true);
+                        alarmaSeleccionada.setActivada(true);
                         //Reinicio del servicio de alarma
                         horaReinicio=Integer.parseInt(itemSeleccionado.getHoraAlarma());
                         minutoReinicio=Integer.parseInt(itemSeleccionado.getMinutoAlarma());
@@ -349,10 +361,12 @@ public class MainActivity extends AppCompatActivity {
                         estado.setText(ItemAlarma.DESACTIVADA);
                         estado.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorDesactivado));
                         itemSeleccionado.setEstaActiva(false);
+                        alarmaSeleccionada.setActivada(false);
                         alarmManager.cancel(pendingIntent);
                         Log.d("@@","item seleccionado: "+ itemSeleccionado.getIdItem());
 
                     }
+                    alarmaDAO.actualizarAlarma(alarmaSeleccionada);
                 }
             }
         });
