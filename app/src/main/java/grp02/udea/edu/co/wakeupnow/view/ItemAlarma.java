@@ -26,7 +26,7 @@ public class ItemAlarma {
     }
 
     public void setHoraAlarma(int horaAlarma) {
-        if(horaAlarma<9){
+        if(horaAlarma<10){
             if (horaAlarma==0){
                 this.horaAlarma = "12";
             }else {
