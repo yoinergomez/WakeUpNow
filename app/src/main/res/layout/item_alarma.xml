@@ -85,7 +85,7 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:tint="@color/colorPrimary"
-                android:src="@android:drawable/ic_lock_idle_alarm" />
+                android:src="@android:drawable/ic_menu_delete" />
 
         </LinearLayout>
 
