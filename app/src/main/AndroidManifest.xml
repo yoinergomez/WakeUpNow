@@ -32,7 +32,10 @@
             android:windowSoftInputMode="stateAlwaysHidden">
         </activity>
 
-        <activity android:name=".AlarmaQR"></activity>
+        <activity
+            android:name=".AlarmaQR">
+        </activity>
+
 
         <receiver
             android:name=".AlarmReceiver"
