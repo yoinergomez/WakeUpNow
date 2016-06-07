@@ -7,6 +7,8 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -17,7 +19,7 @@ import android.widget.Toast;
  */
 public class AlarmReceiver extends BroadcastReceiver {
 
-    public static int ID_NOTIFICACION_ALARMA = 22061995;
+    public static final int ID_NOTIFICACION_ALARMA = 22061995;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -33,6 +35,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     private void crearNotificacion(Context context) {
 
+        final long[] pattern = {10, 1000, 2000};
+
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.ic_alarm_white_48dp)
@@ -46,10 +50,14 @@ public class AlarmReceiver extends BroadcastReceiver {
                         resultIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
-        mBuilder.setDefaults(Notification.DEFAULT_SOUND);
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        mBuilder.setSound(alarmSound);
+        //mBuilder.setDefaults(Notification.DEFAULT_SOUND);
         mBuilder.setContentIntent(resultPendingIntent);
         mBuilder.setOngoing(true);
         mBuilder.setAutoCancel(false);
+        mBuilder.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 });
+        mBuilder.setVisibility(Notification.VISIBILITY_PUBLIC);
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(ID_NOTIFICACION_ALARMA, mBuilder.build());

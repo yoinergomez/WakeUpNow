@@ -37,7 +37,7 @@ public class AlarmaQR extends AppCompatActivity {
 
 
         setContentView(R.layout.activity_alarma_qr);
-        activarSonidoVibracion();
+        //activarSonidoVibracion();
         escanearCodigoQR();
     }
 
@@ -106,7 +106,8 @@ public class AlarmaQR extends AppCompatActivity {
     public void activarSonidoVibracion(){
         // Vibrate the mobile phone
         Vibrator vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(2000);
+        long[] pattern = {0, 1000, 2000};
+        vibrator.vibrate(pattern, 0);
     }
 
     /**
