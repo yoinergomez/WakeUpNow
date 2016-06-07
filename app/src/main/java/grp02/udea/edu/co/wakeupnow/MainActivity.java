@@ -181,36 +181,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Decodifica el código QR para obtener su respectivo texto
-     * @param requestCode
-     * @param resultCode
-     * @param intent
-     */
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        switch (requestCode) {
-            case IntentIntegrator.REQUEST_CODE:
-                if (resultCode == Activity.RESULT_OK) {
-
-                    IntentResult intentResult =
-                            IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-
-                    if (intentResult != null) {
-
-                        String contents = intentResult.getContents();
-                        String format = intentResult.getFormatName();
-
-                        Log.d("@ onActivityResult","CONTENIDO_DEL_QR: " + contents + ", FORMATO: " + format);
-                    } else {
-                        Log.e("@ onActivityResult", "IntentResult es NULL!");
-                    }
-                } else if (resultCode == Activity.RESULT_CANCELED) {
-                    Log.e("@ onActivityResult", "CANCELADO");
-                }
-        }
-    }
-
 
     /**
      *
