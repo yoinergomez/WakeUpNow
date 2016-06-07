@@ -1,14 +1,15 @@
 package grp02.udea.edu.co.wakeupnow;
 
+
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.PowerManager;
+import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-
-import grp02.udea.edu.co.wakeupnow.view.adapter.OrientacionPortraitScanner;
 
 
 /**
@@ -20,16 +21,37 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Toast.makeText(context, "Alarm received!", Toast.LENGTH_LONG).show();
 
-        /*
-        PowerManager pm = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "TRAININGCOUNTDOWN");
-        wl.acquire();
-        */
-
         //Lanzar la actividad de la alarma
         intent = intent.setClassName("grp02.udea.edu.co.wakeupnow",
                 "grp02.udea.edu.co.wakeupnow.AlarmaQR");
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+        crearNotificacion(context);
+    }
+
+    private void crearNotificacion(Context context) {
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(context)
+                        .setSmallIcon(R.drawable.ic_alarm_white_48dp)
+                        .setContentTitle("WakeUpNow: Alarma activada")
+                        .setContentText("Toca para apagar la alarma");
+        Intent resultIntent = new Intent(context, AlarmaQR.class);
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        context,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setDefaults(Notification.DEFAULT_SOUND);
+        mBuilder.setContentIntent(resultPendingIntent);
+        mBuilder.setOngoing(true);
+        mBuilder.setAutoCancel(false);
+        NotificationManager mNotificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(22061995, mBuilder.build());
+
+
     }
 }
