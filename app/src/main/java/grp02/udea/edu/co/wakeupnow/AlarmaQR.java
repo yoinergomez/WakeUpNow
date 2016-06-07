@@ -2,6 +2,7 @@ package grp02.udea.edu.co.wakeupnow;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -10,8 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -35,14 +34,10 @@ public class AlarmaQR extends AppCompatActivity {
             int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
             decorView.setSystemUiVisibility(uiOptions);
         }
-/*        //Oculta el botón de las aplicaciones recientes para impedir la destrucción de la app
-        ActivityManager activityManager = (ActivityManager) getApplicationContext()
-                .getSystemService(Context.ACTIVITY_SERVICE);
-        activityManager.moveTaskToFront(getTaskId(), 0);*/
 
 
         setContentView(R.layout.activity_alarma_qr);
-        activarAlarma();
+        activarSonidoVibracion();
         escanearCodigoQR();
     }
 
@@ -54,9 +49,9 @@ public class AlarmaQR extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
+        //Prohibe salir de la aplicación desde el botón de aplicaciones recientes
         ActivityManager activityManager = (ActivityManager) getApplicationContext()
                 .getSystemService(Context.ACTIVITY_SERVICE);
-
         activityManager.moveTaskToFront(getTaskId(), 0);
     }
 
@@ -88,6 +83,8 @@ public class AlarmaQR extends AppCompatActivity {
 
                     if (intentResult != null) {
 
+                        apagarAlarma();
+
                         String contents = intentResult.getContents();
                         String format = intentResult.getFormatName();
 
@@ -106,9 +103,18 @@ public class AlarmaQR extends AppCompatActivity {
     /**
      * Dispara la alarma activando la vibración y el sonido
      */
-    public void activarAlarma(){
+    public void activarSonidoVibracion(){
         // Vibrate the mobile phone
         Vibrator vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
         vibrator.vibrate(2000);
+    }
+
+    /**
+     * Desactiva la alarma y cancela la notidicacion creada
+     */
+    public void apagarAlarma(){
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.cancel(AlarmReceiver.ID_NOTIFICACION_ALARMA);
     }
 }

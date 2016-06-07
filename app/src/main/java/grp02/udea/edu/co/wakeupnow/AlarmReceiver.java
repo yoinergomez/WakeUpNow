@@ -17,6 +17,8 @@ import android.widget.Toast;
  */
 public class AlarmReceiver extends BroadcastReceiver {
 
+    public static int ID_NOTIFICACION_ALARMA = 22061995;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Toast.makeText(context, "Alarm received!", Toast.LENGTH_LONG).show();
@@ -50,7 +52,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         mBuilder.setAutoCancel(false);
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(22061995, mBuilder.build());
+        mNotificationManager.notify(ID_NOTIFICACION_ALARMA, mBuilder.build());
 
 
     }
