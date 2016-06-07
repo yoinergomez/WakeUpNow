@@ -43,9 +43,9 @@ public class AlarmaDAO extends BDAppRunDAO{
 
 
     public int eliminarAlarma(Alarma alarma){
-        String nomAlarma=alarma.getNombre();
-        return getDb().delete(DataBaseHelper.TABLA_ALARMA, DataBaseHelper.NOMBRE_ALARMA_COLUMNA + "=?",
-                new String[]{nomAlarma});
+        String idAlarma=String.valueOf(alarma.getIdAlarma());
+        return getDb().delete(DataBaseHelper.TABLA_ALARMA, DataBaseHelper.ID_ALARMA_COLUMNA + "=?",
+                new String[]{idAlarma});
 
     }
 

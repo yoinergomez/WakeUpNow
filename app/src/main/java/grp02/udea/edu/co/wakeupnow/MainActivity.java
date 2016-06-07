@@ -7,6 +7,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -22,6 +23,7 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -36,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 import grp02.udea.edu.co.wakeupnow.dao.AlarmaDAO;
@@ -47,12 +50,12 @@ import grp02.udea.edu.co.wakeupnow.view.adapter.ItemAlarmaAdapter;
 public class MainActivity extends AppCompatActivity {
 
     private ArrayList<ItemAlarma> itemAlarmas;
-    private ArrayList<Alarma> alarmas;
+    private HashMap alarmasHM;
     private ListView lista;
     private Alarma alarma;
     private AlarmaDAO alarmaDAO;
     private SimpleDateFormat formatter ;
-    private ArrayList<PendingIntent> pendingIntents;
+    private HashMap pendingintentsHM;
     private int numeroAlarmas;
 
 
@@ -63,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-            pendingIntents=new ArrayList<>();
-            alarmas = new ArrayList<Alarma>();
+            pendingintentsHM=new HashMap();
+            alarmasHM=new HashMap();
             itemAlarmas = new ArrayList<ItemAlarma>();
             lista = (ListView) findViewById(R.id.ListView_alarmas);
             alarmaDAO=new AlarmaDAO(this);
@@ -136,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, AlarmReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this,cursor.getInt(0),
                     intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            pendingIntents.add(pendingIntent);
+            pendingintentsHM.put(cursor.getInt(0),pendingIntent);
             Alarma alarmaAux = new Alarma();
             alarmaAux.setFecha(fechaAlarma);
             if(cursor.getInt(3)==0){
@@ -145,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                 alarmaAux.setActivada(true);
             }
             alarmaAux.setIdAlarma(cursor.getInt(0));
-            alarmas.add(alarmaAux);
+            alarmasHM.put(alarmaAux.getIdAlarma(),alarmaAux);
             itemAlarma.setIdItem(cursor.getInt(0));
             itemAlarma.setHoraAlarma(hora);
             itemAlarma.setMinutoAlarma(minuto);
@@ -237,8 +240,8 @@ public class MainActivity extends AppCompatActivity {
         alarma.setActivada(true);
         alarma.setIdAlarma(numeroAlarmas);
         Log.d("@@@", "numeroAlarmas:" + numeroAlarmas);
-        pendingIntents.add(pendingIntent);
-        alarmas.add(alarma);
+        pendingintentsHM.put(alarma.getIdAlarma(), pendingIntent);
+        alarmasHM.put(alarma.getIdAlarma(),alarma);
         alarmaDAO.guardarAlarma(alarma);
 
         // Nuevo item de alarma
@@ -264,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
     public void cargarListaAdapter(){
         lista.setAdapter(new ItemAlarmaAdapter(this, R.layout.item_alarma, itemAlarmas) {
             @Override
-            public void onEntrada(Object entrada, View view) {
+            public void onEntrada(final Object entrada, View view) {
                 TextView reloj = (TextView) view.findViewById(R.id.textoReloj);
                 reloj.setText(((ItemAlarma) entrada).getAlarma());
 
@@ -277,6 +280,7 @@ public class MainActivity extends AppCompatActivity {
 
                 SwitchCompat activada = (SwitchCompat) view.findViewById(R.id.switch_activarAlarma);
                 TextView estado = (TextView) view.findViewById(R.id.textView_estadoAlarma);
+                ImageButton imageButton=(ImageButton)view.findViewById(R.id.imageButton);
                 if (((ItemAlarma) entrada).isEstaActiva()) {
                     estado.setText(ItemAlarma.ACTIVADA);
                     activada.setChecked(true);
@@ -284,7 +288,21 @@ public class MainActivity extends AppCompatActivity {
                     estado.setText(ItemAlarma.DESACTIVADA);
                     activada.setChecked(false);
                 }
+                imageButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //Alarma alarmaAux=alarmas.get(((ItemAlarma) entrada).getIdItem());
+                        Alarma alarmaAux=(Alarma)alarmasHM.get(((ItemAlarma) entrada).getIdItem());
+                        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+                        alarmManager.cancel((PendingIntent)pendingintentsHM.get(alarmaAux.getIdAlarma()));
+                        pendingintentsHM.remove(alarmaAux.getIdAlarma());
+                        alarmasHM.remove(alarmaAux.getIdAlarma());
+                        alarmaDAO.eliminarAlarma(alarmaAux);
+                        itemAlarmas.remove(entrada);
+                        cargarListaAdapter();
 
+                    }
+                });
                 listenerClickSwitch(view, (ItemAlarma) entrada);
             }
         });
@@ -330,9 +348,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-                PendingIntent pendingIntent=pendingIntents.get(itemSeleccionado.getIdItem());
+                PendingIntent pendingIntent=(PendingIntent)pendingintentsHM.get(((ItemAlarma) itemSeleccionado).getIdItem());
                 Calendar calendar = Calendar.getInstance();
-                Alarma alarmaSeleccionada=alarmas.get(itemSeleccionado.getIdItem());
+                Alarma alarmaSeleccionada=(Alarma)alarmasHM.get(((ItemAlarma) itemSeleccionado).getIdItem());
                 int horaReinicio;
                 int minutoReinicio;
                 if (buttonView.isPressed()) {
