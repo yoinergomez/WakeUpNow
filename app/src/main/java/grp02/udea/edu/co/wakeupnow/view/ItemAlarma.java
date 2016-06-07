@@ -42,7 +42,7 @@ public class ItemAlarma {
     }
 
     public void setMinutoAlarma(int minutoAlarma) {
-        if(minutoAlarma<9){
+        if(minutoAlarma<10){
             this.minutoAlarma = "0"+minutoAlarma;
         } else {
             this.minutoAlarma = String.valueOf(minutoAlarma);
