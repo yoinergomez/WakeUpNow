@@ -1,13 +1,11 @@
 package grp02.udea.edu.co.wakeupnow;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,11 +13,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
-
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CompoundButton;
@@ -28,10 +25,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
-
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -95,18 +88,6 @@ public class MainActivity extends AppCompatActivity {
                             agregarAlarma(selectedHour, selectedMinute);
                             Toast.makeText(getApplicationContext(), selectedHour + ":" + selectedMinute + " " + timePicker.getBaseline(), Toast.LENGTH_LONG).show();
 
-                            /*
-                            //new IntentIntegrator((Activity) MainActivity.this).initiateScan();
-                            IntentIntegrator integrator = new IntentIntegrator((Activity) MainActivity.this);
-                            integrator.setCaptureActivity(OrientacionPortraitScanner.class);
-                            integrator.setPrompt("Escanee el codigo QR para apagar la alarma");
-                            integrator.setOrientationLocked(true);
-                            integrator.initiateScan();
-                            */
-
-
-
-
                         }
                     }, hour, minute, false);//Yes 24 hour time
                     mTimePicker.setTitle("Seleccione hora");
@@ -136,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 itemAlarma.setEsPM(true);
             }
 
-            Intent intent = new Intent(this, AlarmReceiver.class);
+            Intent intent = new Intent(this, ControlAlarmaService.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this,cursor.getInt(0),
                     intent, PendingIntent.FLAG_UPDATE_CURRENT);
             pendingintentsHM.put(cursor.getInt(0),pendingIntent);
@@ -194,9 +175,9 @@ public class MainActivity extends AppCompatActivity {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        Intent intent = new Intent(this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,numeroAlarmas,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent = new Intent(this, ControlAlarmaService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this,numeroAlarmas,
+                intent,PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         Log.d("@@@", "hora normal: " + calendar.getTimeInMillis());

@@ -1,15 +1,9 @@
 package grp02.udea.edu.co.wakeupnow;
 
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 
@@ -35,7 +29,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     private void crearNotificacion(Context context) {
 
-        final long[] pattern = {10, 1000, 2000};
+        /*final long[] pattern = {10, 1000, 2000};
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
@@ -50,7 +44,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                         resultIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         mBuilder.setSound(alarmSound);
         //mBuilder.setDefaults(Notification.DEFAULT_SOUND);
         mBuilder.setContentIntent(resultPendingIntent);
@@ -60,8 +54,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         mBuilder.setVisibility(Notification.VISIBILITY_PUBLIC);
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(ID_NOTIFICACION_ALARMA, mBuilder.build());
-
+        mNotificationManager.notify(ID_NOTIFICACION_ALARMA, mBuilder.build());*/
 
     }
 }
