@@ -32,6 +32,12 @@ public class ControlAlarmaService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        //iniciar actividad de escaneo QR
+        intent = intent.setClassName("grp02.udea.edu.co.wakeupnow",
+                "grp02.udea.edu.co.wakeupnow.AlarmaQR");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+
         activarSonidoVibracion();
         return START_NOT_STICKY;
     }
