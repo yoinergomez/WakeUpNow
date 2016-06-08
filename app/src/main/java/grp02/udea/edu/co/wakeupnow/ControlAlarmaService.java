@@ -1,5 +1,7 @@
 package grp02.udea.edu.co.wakeupnow;
 
+import android.app.Activity;
+import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -9,9 +11,11 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.WindowManager;
 
 public class ControlAlarmaService extends Service {
 
@@ -32,6 +36,18 @@ public class ControlAlarmaService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        //Encender pantalla bloqueada
+        KeyguardManager.KeyguardLock lock = ((KeyguardManager) getSystemService(Activity.KEYGUARD_SERVICE)).newKeyguardLock(KEYGUARD_SERVICE);
+        PowerManager powerManager = ((PowerManager) getSystemService(Context.POWER_SERVICE));
+        PowerManager.WakeLock wake = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "TAG");
+
+        lock.disableKeyguard();
+        wake.acquire();
+
+
+
+
+
         //iniciar actividad de escaneo QR
         intent = intent.setClassName("grp02.udea.edu.co.wakeupnow",
                 "grp02.udea.edu.co.wakeupnow.AlarmaQR");
