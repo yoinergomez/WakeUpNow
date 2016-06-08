@@ -10,16 +10,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import java.util.Random;
 
 import grp02.udea.edu.co.wakeupnow.view.adapter.OrientacionPortraitScanner;
 
 public class AlarmaQR extends AppCompatActivity {
 
     private IntentIntegrator integrator;
+    private int indexRandom;
+    private TextView fraseOriginal;
+    private EditText fraseReplica;
+    private final String[] frases = {
+            "Por mucho madrugar, aparecen las ojeras",
+            "Joven madrugador, viejo trasnochador",
+            "A quien madruga, Dios le ayuda"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +56,11 @@ public class AlarmaQR extends AppCompatActivity {
         integrator = new IntentIntegrator(this);
         setContentView(R.layout.activity_alarma_qr);
         escanearCodigoQR();
+
+        Random rand = new Random();
+        indexRandom = rand.nextInt((frases.length));
+        fraseOriginal = (TextView) findViewById(R.id.txv_frase);
+        fraseOriginal.setText(frases[indexRandom]);
     }
 
     @Override
@@ -87,15 +104,18 @@ public class AlarmaQR extends AppCompatActivity {
                             IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 
                     if (intentResult != null) {
-
                         //apagarAlarma();
                         stopService(new Intent(this, ControlAlarmaService.class));
 
                         String contents = intentResult.getContents();
                         String format = intentResult.getFormatName();
-
                         Toast.makeText(getApplicationContext(), contents, Toast.LENGTH_LONG).show();
                         Log.d("@ onActivityResult", "CONTENIDO_DEL_QR: " + contents + ", FORMATO: " + format);
+
+                        //iniciar actividad principal
+                        finish();
+                        Intent intentMain = new Intent(this, MainActivity.class);
+                        startActivity(intentMain);
                     } else {
                         Log.e("@ onActivityResult", "IntentResult es NULL!");
                     }

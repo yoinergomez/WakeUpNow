@@ -72,9 +72,8 @@ public class MainActivity extends AppCompatActivity {
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
-                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                public void onClick(final View view) {
+
 
                     Calendar mcurrentTime = Calendar.getInstance();
                     int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
@@ -85,9 +84,10 @@ public class MainActivity extends AppCompatActivity {
                     mTimePicker = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                            final View view1 = view;
                             agregarAlarma(selectedHour, selectedMinute);
-                            Toast.makeText(getApplicationContext(), selectedHour + ":" + selectedMinute + " " + timePicker.getBaseline(), Toast.LENGTH_LONG).show();
-
+                            Snackbar.make(view1, "Alarma creada exitosamente!", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
                         }
                     }, hour, minute, false);//Yes 24 hour time
                     mTimePicker.setTitle("Seleccione hora");
