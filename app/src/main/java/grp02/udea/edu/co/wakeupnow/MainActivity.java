@@ -167,10 +167,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     *
+     * Crea una alarma indicando su hora:minuto de activación
+     * @param hora
+     * @param minuto
      */
     public void agregarAlarma(int hora, int minuto){
         Calendar calendar = Calendar.getInstance();
+        Calendar calendar2 = Calendar.getInstance();
 
         //Inicio creaciòn del servicio de alarma
         calendar.set(Calendar.HOUR_OF_DAY, hora);
@@ -178,12 +181,19 @@ public class MainActivity extends AppCompatActivity {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
+        calendar2.set(Calendar.SECOND, 0);
+        calendar2.set(Calendar.MILLISECOND, 0);
+        if(calendar2.getTime().compareTo(calendar.getTime())!=-1){
+            calendar.add(Calendar.DATE,1);
+        }
+
         Intent intent = new Intent(this, ControlAlarmaService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this,numeroAlarmas,
                 intent,PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         Log.d("@@@", "hora normal: " + calendar.getTimeInMillis());
+        Log.d("@@@", "hora normal: " + calendar.getTime());
         //Fin creaciòn del servicio de alarma
 
         Date date = calendar.getTime();
