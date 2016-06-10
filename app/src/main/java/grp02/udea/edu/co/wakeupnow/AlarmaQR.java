@@ -64,16 +64,7 @@ public class AlarmaQR extends AppCompatActivity {
     @Override
     public void onBackPressed() {
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        //Prohibe salir de la aplicación desde el botón de aplicaciones recientes
-        ActivityManager activityManager = (ActivityManager) getApplicationContext()
-                .getSystemService(Context.ACTIVITY_SERVICE);
-        activityManager.moveTaskToFront(getTaskId(), 0);
-    }
+    
 
     /**
      * Inicia el escaner del codigo QR
