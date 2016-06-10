@@ -51,13 +51,16 @@
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType="textNoSuggestions"
+        android:hint="Escriba la frase"
         android:id="@+id/editText"
         android:layout_gravity="center_horizontal" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Verificar"
+        android:onClick="actionListenerButtonVerificar"
         android:id="@+id/btn_verificar"
         android:layout_gravity="center_horizontal" />
 </LinearLayout>

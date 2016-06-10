@@ -6,10 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +26,7 @@ import grp02.udea.edu.co.wakeupnow.view.adapter.OrientacionPortraitScanner;
 public class AlarmaQR extends AppCompatActivity {
 
     private IntentIntegrator integrator;
+    private Button button_verificar;
     private int indexRandom;
     private TextView fraseOriginal;
     private EditText fraseReplica;
@@ -57,14 +60,33 @@ public class AlarmaQR extends AppCompatActivity {
 
         Random rand = new Random();
         indexRandom = rand.nextInt((frases.length));
+        fraseReplica = (EditText) findViewById(R.id.editText);
         fraseOriginal = (TextView) findViewById(R.id.txv_frase);
         fraseOriginal.setText(frases[indexRandom]);
+
+    }
+
+    public void actionListenerButtonVerificar(View view) {
+        if(fraseOriginal.getText().toString().equals(fraseReplica.getText().toString())){
+            //apagarAlarma();
+            stopService(new Intent(this, ControlAlarmaService.class));
+
+            //iniciar actividad principal
+            finish();
+            Intent intentMain = new Intent(this, MainActivity.class);
+            startActivity(intentMain);
+        }else{
+            Snackbar.make(view, "Escriba correctamente la frase", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+        }
+        Log.d("@",fraseOriginal.getText().toString());
+        Log.d("@",fraseOriginal.getText().toString());
     }
 
     @Override
     public void onBackPressed() {
     }
-    
+
 
     /**
      * Inicia el escaner del codigo QR
