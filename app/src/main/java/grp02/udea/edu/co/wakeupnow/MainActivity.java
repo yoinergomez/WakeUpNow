@@ -371,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void editarAlarmaDialog(ItemAlarma itemAlarma){
+    private void editarAlarmaDialog(final ItemAlarma itemAlarma){
         //Configurando dialog
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_editar_alarma);
@@ -380,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
         //Cambiando hora en timepicker
         final TimePicker timePicker = (TimePicker) dialog.findViewById(R.id.timePicker_reloj);
         int hora =Integer.parseInt(itemAlarma.getHoraAlarma());
-        int minutos = Integer.parseInt(itemAlarma.getMinutoAlarma());
+        final int minutos = Integer.parseInt(itemAlarma.getMinutoAlarma());
         if(itemAlarma.isEsPM()){
             hora+=12;
         }
@@ -414,6 +414,26 @@ public class MainActivity extends AppCompatActivity {
                     @Override public void onClick(View v) {
                         final int horaEdit = timePicker.getCurrentHour();
                         final int minutosEdit = timePicker.getCurrentMinute();
+                        itemAlarma.setHoraAlarma(horaEdit);
+                        itemAlarma.setMinutoAlarma(minutosEdit);
+                        Alarma alarma = (Alarma) alarmasHM.get(itemAlarma.getIdItem());
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(alarma.getFecha());
+                        calendar.set(Calendar.HOUR_OF_DAY, horaEdit);
+                        calendar.set(Calendar.MINUTE, minutosEdit);
+                        alarma.setFecha(calendar.getTime());
+
+                        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+                        alarmManager.cancel((PendingIntent) pendingintentsHM.get(alarma.getIdAlarma()));
+                        pendingintentsHM.remove(alarma.getIdAlarma());
+
+                        Intent intent = new Intent(v.getContext(), ControlAlarmaService.class);
+                        PendingIntent pendingIntent = PendingIntent.getService(v.getContext(),alarma.getIdAlarma(),
+                                intent,PendingIntent.FLAG_UPDATE_CURRENT);
+                        alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                        pendingintentsHM.put(alarma.getIdAlarma(), pendingIntent);
+                        alarmaDAO.actualizarAlarma(alarma);
 
                         final boolean lunes = checkBox0.isChecked();
                         final boolean martes = checkBox1.isChecked();
@@ -422,7 +442,7 @@ public class MainActivity extends AppCompatActivity {
                         final boolean viernes = checkBox4.isChecked();
                         final boolean sabado = checkBox5.isChecked();
                         final boolean domingo = checkBox6.isChecked();
-
+                        cargarListaAdapter();
                         dialog.dismiss();
                     }
                 });
