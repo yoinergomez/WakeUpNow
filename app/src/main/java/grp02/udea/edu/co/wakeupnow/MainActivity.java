@@ -1,11 +1,13 @@
 package grp02.udea.edu.co.wakeupnow;
 
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,8 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -257,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                editarAlarmaDialog(itemSeleccionado);
                 CharSequence texto = "Seleccionado: " + itemSeleccionado.isEstaActiva();
                 Toast toast = Toast.makeText(MainActivity.this, texto + " " + itemSeleccionado.getAlarma() + " " + itemSeleccionado.getHoraAlarma() + " " + itemSeleccionado.getMinutoAlarma(), Toast.LENGTH_SHORT);
                 toast.show();
@@ -356,5 +358,67 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+
+    private void editarAlarmaDialog(ItemAlarma itemAlarma){
+        //Configurando dialog
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_editar_alarma);
+        dialog.setTitle("Editar alarma");
+
+        //Cambiando hora en timepicker
+        final TimePicker timePicker = (TimePicker) dialog.findViewById(R.id.timePicker_reloj);
+        int hora =Integer.parseInt(itemAlarma.getHoraAlarma());
+        int minutos = Integer.parseInt(itemAlarma.getMinutoAlarma());
+        if(itemAlarma.isEsPM()){
+            hora+=12;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            timePicker.setHour(hora);
+            timePicker.setMinute(minutos);
+        } else {
+            timePicker.setCurrentHour(hora);
+            timePicker.setCurrentMinute(minutos);
+        }
+
+
+        final CheckBox checkBox0 = (CheckBox) dialog.findViewById(R.id.checkBox_lunes);
+        final CheckBox checkBox1 = (CheckBox) dialog.findViewById(R.id.checkBox_martes);
+        final CheckBox checkBox2 = (CheckBox) dialog.findViewById(R.id.checkBox_miercoles);
+        final CheckBox checkBox3 = (CheckBox) dialog.findViewById(R.id.checkBox_jueves);
+        final CheckBox checkBox4 = (CheckBox) dialog.findViewById(R.id.checkBox_viernes);
+        final CheckBox checkBox5 = (CheckBox) dialog.findViewById(R.id.checkBox_sabado);
+        final CheckBox checkBox6 = (CheckBox) dialog.findViewById(R.id.checkBox_domingo);
+
+
+        dialog.findViewById(R.id.boton_cancelar)
+            .setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+
+        dialog.findViewById(R.id.boton_editar)
+                .setOnClickListener(new View.OnClickListener(){
+                    @Override public void onClick(View v) {
+                        final int horaEdit = timePicker.getCurrentHour();
+                        final int minutosEdit = timePicker.getCurrentMinute();
+
+                        final boolean lunes = checkBox0.isChecked();
+                        final boolean martes = checkBox1.isChecked();
+                        final boolean miercoles = checkBox2.isChecked();
+                        final boolean jueves = checkBox3.isChecked();
+                        final boolean viernes = checkBox4.isChecked();
+                        final boolean sabado = checkBox5.isChecked();
+                        final boolean domingo = checkBox6.isChecked();
+
+                        dialog.dismiss();
+                    }
+                });
+
+
+        dialog.show();
+
     }
 }
