@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             lista = (ListView) findViewById(R.id.ListView_alarmas);
             alarmaDAO=new AlarmaDAO(this);
             numeroAlarmas=alarmaDAO.getIdUltimoRegistro()+1;
-            listenerListaAlarmas();
+
 
 
             final TextView texoReloj = (TextView) findViewById(R.id.textoReloj);
@@ -240,44 +241,59 @@ public class MainActivity extends AppCompatActivity {
                     estado.setText(ItemAlarma.DESACTIVADA);
                     activada.setChecked(false);
                 }
-                imageButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //Alarma alarmaAux=alarmas.get(((ItemAlarma) entrada).getIdItem());
-                        Alarma alarmaAux=(Alarma)alarmasHM.get(((ItemAlarma) entrada).getIdItem());
-                        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-                        alarmManager.cancel((PendingIntent)pendingintentsHM.get(alarmaAux.getIdAlarma()));
-                        pendingintentsHM.remove(alarmaAux.getIdAlarma());
-                        alarmasHM.remove(alarmaAux.getIdAlarma());
-                        alarmaDAO.eliminarAlarma(alarmaAux);
-                        itemAlarmas.remove(entrada);
-                        cargarListaAdapter();
 
-                    }
-                });
                 listenerClickSwitch(view, (ItemAlarma) entrada);
+                listenerClickDelete(view, (ItemAlarma) entrada);
+                listenerItemAlarma(view, (ItemAlarma) entrada);
             }
         });
     }
 
-    /**
-     * Agrega el listener para cada item de la lista de itemAlarmas
-     */
-    public void listenerListaAlarmas(){
-        lista.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> pariente, View view, int posicion, long id) {
-                ItemAlarma elegido = (ItemAlarma) pariente.getItemAtPosition(posicion);
+    private void listenerItemAlarma(View view, ItemAlarma item) {
+        final ItemAlarma itemSeleccionado = item;
+        final View view1 = view;
+        final LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.linear_alarma);
 
-                CharSequence texto = "Seleccionado: " + elegido.isEstaActiva();
-                Toast toast = Toast.makeText(MainActivity.this, texto + " " + elegido.getAlarma() + " " + elegido.getHoraAlarma() + " " + elegido.getMinutoAlarma(), Toast.LENGTH_SHORT);
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CharSequence texto = "Seleccionado: " + itemSeleccionado.isEstaActiva();
+                Toast toast = Toast.makeText(MainActivity.this, texto + " " + itemSeleccionado.getAlarma() + " " + itemSeleccionado.getHoraAlarma() + " " + itemSeleccionado.getMinutoAlarma(), Toast.LENGTH_SHORT);
                 toast.show();
             }
         });
     }
 
     /**
-     * Agrega el listener paara el switch que permite activar o desactivar una alarma
+     * Crea listener correspondiente al imageButton que permite eliminar una alarma
+     * @param view
+     * @param item
+     */
+    private void listenerClickDelete(View view, final ItemAlarma item) {
+        final ItemAlarma itemSeleccionado = item;
+        final View view1 = view;
+        final ImageButton imageButton = (ImageButton) view.findViewById(R.id.imageButton);
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Alarma alarmaAux=alarmas.get(((ItemAlarma) entrada).getIdItem());
+                Alarma alarmaAux=(Alarma)alarmasHM.get(((ItemAlarma) item).getIdItem());
+                AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+                alarmManager.cancel((PendingIntent)pendingintentsHM.get(alarmaAux.getIdAlarma()));
+                pendingintentsHM.remove(alarmaAux.getIdAlarma());
+                alarmasHM.remove(alarmaAux.getIdAlarma());
+                alarmaDAO.eliminarAlarma(alarmaAux);
+                itemAlarmas.remove(item);
+                cargarListaAdapter();
+
+            }
+        });
+
+    }
+
+    /**
+     * Agrega el listener para el switch que permite activar o desactivar una alarma
      * @param view
      * @param item
      */
