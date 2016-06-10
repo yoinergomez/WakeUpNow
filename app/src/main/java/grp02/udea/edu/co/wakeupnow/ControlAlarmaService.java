@@ -45,9 +45,6 @@ public class ControlAlarmaService extends Service {
         wake.acquire();
 
 
-
-
-
         //iniciar actividad de escaneo QR
         intent = intent.setClassName("grp02.udea.edu.co.wakeupnow",
                 "grp02.udea.edu.co.wakeupnow.AlarmaQR");
